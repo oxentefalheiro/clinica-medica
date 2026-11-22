@@ -23,6 +23,10 @@ public class Paciente {
     @Column(nullable = false, unique = true)
     private String cpf;
 
+    // Inativação lógica: o paciente não é apagado (preserva o histórico de consultas)
+    @Column(nullable = false)
+    private boolean ativo = true;
+
     public Paciente(String nome, LocalDate dataNascimento, String telefone, String cpf){
         this.nome = nome;
         this.dataNascimento = dataNascimento;
@@ -68,5 +72,13 @@ public class Paciente {
 
     public void setCpf(String cpf){
         this.cpf = cpf;
+    }
+
+    public boolean isAtivo() {
+        return ativo;
+    }
+
+    public void setAtivo(boolean ativo) {
+        this.ativo = ativo;
     }
 }

@@ -1,39 +1,22 @@
 package br.com.clinica.clinica_api.dto;
 
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 
+// O ID agora vem pela URL (PUT /pacientes/{id}).
+// Os campos não são obrigatórios porque o usuário pode querer alterar apenas um deles.
 public class PacienteUpdateDTO {
 
-    @NotNull(message = "O ID do paciente é obrigatório.")
-    private Long id;
-
-    //Não colocamos NotNull porque o usuário pode desejar modificar apenas uma das variáveis
     private String nome;
+
+    @Pattern(regexp = "\\d{10,11}", message = "O telefone deve conter DDD + número, apenas dígitos (10 ou 11).")
     private String telefone;
+
     public PacienteUpdateDTO() {
     }
 
-    public Long getId() {
-        return id;
-    }
+    public String getNome() { return nome; }
+    public void setNome(String nome) { this.nome = nome; }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getNome() {
-        return nome;
-    }
-
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
-    public String getTelefone() {
-        return telefone;
-    }
-
-    public void setTelefone(String telefone) {
-        this.telefone = telefone;
-    }
+    public String getTelefone() { return telefone; }
+    public void setTelefone(String telefone) { this.telefone = telefone; }
 }

@@ -3,7 +3,6 @@ package br.com.clinica.clinica_api.model;
 import br.com.clinica.clinica_api.enums.Perfil;
 import jakarta.persistence.*;
 import org.jspecify.annotations.Nullable;
-import org.springframework.data.repository.cdi.Eager;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

@@ -14,12 +14,14 @@ public class Agendamento {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    // N:1 -> um paciente pode ter várias consultas (FK paciente_id)
     @ManyToOne
-    @JoinColumn(name = "paciente_id")
+    @JoinColumn(name = "paciente_id", nullable = false)
     private Paciente paciente;
 
+    // N:1 -> um médico pode ter várias consultas (FK medico_id)
     @ManyToOne
-    @JoinColumn(name = "medico_id")
+    @JoinColumn(name = "medico_id", nullable = false)
     private Medico medico;
 
     @Column(nullable = false)

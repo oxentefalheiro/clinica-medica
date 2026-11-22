@@ -19,8 +19,9 @@ public class Medico {
     @Column(nullable = false, unique = true)
     private String crm;
 
+    // N:1 -> vários médicos pertencem a uma especialidade (FK especialidade_id)
     @ManyToOne
-    @JoinColumn(name = "especialidade_id")
+    @JoinColumn(name = "especialidade_id", nullable = false)
     private Especialidade especialidade;
 
     @Column(nullable = false)
@@ -30,6 +31,10 @@ public class Medico {
     private LocalTime horarioInicio;
 
     private LocalTime horarioFim;
+
+    // Inativação lógica: o médico não é apagado (preserva o histórico de consultas)
+    @Column(nullable = false)
+    private boolean ativo = true;
 
     public Medico() {
     }
@@ -98,5 +103,13 @@ public class Medico {
 
     public void setHorarioFim(LocalTime horarioFim) {
         this.horarioFim = horarioFim;
+    }
+
+    public boolean isAtivo() {
+        return ativo;
+    }
+
+    public void setAtivo(boolean ativo) {
+        this.ativo = ativo;
     }
 }

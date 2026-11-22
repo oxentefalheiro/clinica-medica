@@ -1,5 +1,12 @@
 package br.com.clinica.clinica_api.service;
 
+import br.com.clinica.clinica_api.exception.RegraNegocioException;
+
+import br.com.clinica.clinica_api.exception.ConflitoException;
+
+import br.com.clinica.clinica_api.exception.RecursoNaoEncontradoException;
+
+import br.com.clinica.clinica_api.dto.SenhaUpdateDTO;
 import br.com.clinica.clinica_api.dto.UsuarioRequestDTO;
 import br.com.clinica.clinica_api.enums.Perfil;
 import br.com.clinica.clinica_api.model.Usuario;
@@ -33,12 +40,12 @@ public class UsuarioService {
     }
 
     public Usuario buscarPorId (Long id){
-        return usuarioRepository.findById(id).orElseThrow(()-> new RuntimeException("Funcionário não encontrado com o ID: "+ id));
+        return usuarioRepository.findById(id).orElseThrow(()-> new RecursoNaoEncontradoException("Usuário não encontrado com o ID: " + id));
     }
 
     public Usuario cadastrar(UsuarioRequestDTO usuarioDto) {
         if (usuarioRepository.existsByLogin(usuarioDto.getLogin())) {
-            throw new RuntimeException("Login já cadastrado!");
+            throw new ConflitoException("Login já cadastrado.");
         }
 
         Usuario usuario = new Usuario();
@@ -54,11 +61,11 @@ public class UsuarioService {
         return usuarioRepository.save(usuario);
     }
 
-    public Usuario atualizarSenha (Long id, Usuario senhaAtualizada){
+    public Usuario atualizarSenha (Long id, SenhaUpdateDTO dto){
         Usuario usuarioExistente = this.buscarPorId(id);
 
         //Criptografando a nova senha antes de salvar!
-        usuarioExistente.setSenha(passwordEncoder.encode(senhaAtualizada.getSenha()));
+        usuarioExistente.setSenha(passwordEncoder.encode(dto.getNovaSenha()));
 
         return usuarioRepository.save(usuarioExistente);
     }
@@ -66,8 +73,12 @@ public class UsuarioService {
     public Usuario inativar (Long id){
         Usuario usuario = this.buscarPorId(id);
 
+        if(!usuario.isAtivo()){
+            throw new ConflitoException("O usuário já está inativo.");
+        }
+
         if(usuario.getPerfil() != Perfil.RECEPCIONISTA){
-            throw new RuntimeException("Não é possível inativar perfis de médicos e/ou pacientes.");
+            throw new RegraNegocioException("Somente usuários com perfil RECEPCIONISTA podem ser inativados.");
         }
 
         usuario.setAtivo(false);

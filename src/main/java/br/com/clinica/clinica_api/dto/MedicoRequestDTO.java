@@ -3,6 +3,7 @@ package br.com.clinica.clinica_api.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -13,6 +14,7 @@ public class MedicoRequestDTO {
     private String nome;
 
     @NotBlank(message = "O CRM é obrigatório.")
+    @Pattern(regexp = "\\d{4,7}-?[A-Za-z]{2}", message = "O CRM deve seguir o formato número + UF (ex.: 123456-BA).")
     private String crm;
 
     @NotNull(message = "O ID da especialidade é obrigatório.")
@@ -24,6 +26,7 @@ public class MedicoRequestDTO {
     @NotNull(message = "O horário do início do atendimento é obrigatório.")
     private LocalTime horarioInicio;
 
+    @NotNull(message = "O horário de fim do atendimento é obrigatório.")
     private LocalTime horarioFim;
 
     public MedicoRequestDTO() {

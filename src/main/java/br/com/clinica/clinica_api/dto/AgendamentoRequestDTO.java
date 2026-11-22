@@ -1,11 +1,8 @@
 package br.com.clinica.clinica_api.dto;
 
-import br.com.clinica.clinica_api.model.Medico;
-import br.com.clinica.clinica_api.model.Paciente;
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotNull;
 
-import javax.crypto.Mac;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
@@ -18,12 +15,13 @@ public class AgendamentoRequestDTO {
     private Long medicoId;
 
     @NotNull(message = "O dia da consulta é obrigatório.")
+    @FutureOrPresent(message = "Não é possível agendar consulta em data passada.")
     private LocalDate dataConsulta;
 
     @NotNull(message = "A hora da consulta é obrigatória.")
     private LocalTime horaConsulta;
 
-    //Coloco StatusAgendamento statusAgendamento?
+    // O status não vem do cliente: todo agendamento novo nasce como AGENDADO (definido no Service)
     public AgendamentoRequestDTO() {
     }
 

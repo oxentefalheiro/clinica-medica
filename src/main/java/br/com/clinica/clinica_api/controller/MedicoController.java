@@ -11,6 +11,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponentsBuilder;
+
+import java.net.URI;
 
 @RestController
 @RequestMapping("/medico")
@@ -22,28 +25,37 @@ public class MedicoController {
         this.medicoService = medicoService;
     }
 
-    //Vai fazer com que, ao listar, ele mostre 10 médicos por vez
+    // Lista 10 médicos por página, em ordem alfabética
     @GetMapping
-    public ResponseEntity<Page<MedicoResponseDTO>> listarTodos(@PageableDefault(size = 10, sort = {"nome"})Pageable paginacao) {
-        Page<Medico> medicos = medicoService.listarTodos(paginacao);
+    public ResponseEntity<Page<MedicoResponseDTO>> listarTodos(@PageableDefault(size = 10, sort = {"nome"}) Pageable paginacao) {
+        return ResponseEntity.ok(medicoService.listarTodos(paginacao).map(MedicoResponseDTO::new));
+    }
 
-        Page <MedicoResponseDTO> paginaMedicos = medicos.map(MedicoResponseDTO::new);
-        return ResponseEntity.ok(paginaMedicos);
+    @GetMapping("/{id}")
+    public ResponseEntity<MedicoResponseDTO> buscarPorId(@PathVariable Long id) {
+        return ResponseEntity.ok(new MedicoResponseDTO(medicoService.buscarPorId(id)));
+    }
+
+    @GetMapping("/especialidade/{especialidadeId}")
+    public ResponseEntity<Page<MedicoResponseDTO>> listarPorEspecialidade(@PathVariable Long especialidadeId,
+                                                                          @PageableDefault(size = 10, sort = {"nome"}) Pageable paginacao) {
+        return ResponseEntity.ok(medicoService.listarPorEspecialidade(especialidadeId, paginacao).map(MedicoResponseDTO::new));
     }
 
     @PostMapping
-    public ResponseEntity<MedicoResponseDTO> cadastrar(@RequestBody @Valid MedicoRequestDTO medico){
-        Medico cadastrarMedico = medicoService.cadastrar(medico);
-
-        return ResponseEntity.ok(new MedicoResponseDTO(cadastrarMedico));
+    public ResponseEntity<MedicoResponseDTO> cadastrar(@RequestBody @Valid MedicoRequestDTO dto, UriComponentsBuilder uriBuilder) {
+        Medico medico = medicoService.cadastrar(dto);
+        URI uri = uriBuilder.path("/medico/{id}").buildAndExpand(medico.getId()).toUri();
+        return ResponseEntity.created(uri).body(new MedicoResponseDTO(medico));
     }
 
-    @PutMapping
-    public ResponseEntity<MedicoResponseDTO> atualizar(@RequestBody @Valid MedicoUpdateDTO medicoDto) {
-        Medico atualizarMedico = medicoService.atualizar(medicoDto);
-
-        return ResponseEntity.ok(new MedicoResponseDTO(atualizarMedico));
+    @PutMapping("/{id}")
+    public ResponseEntity<MedicoResponseDTO> atualizar(@PathVariable Long id, @RequestBody @Valid MedicoUpdateDTO dto) {
+        return ResponseEntity.ok(new MedicoResponseDTO(medicoService.atualizar(id, dto)));
     }
 
-
+    @PatchMapping("/{id}/inativar")
+    public ResponseEntity<MedicoResponseDTO> inativar(@PathVariable Long id) {
+        return ResponseEntity.ok(new MedicoResponseDTO(medicoService.inativar(id)));
+    }
 }

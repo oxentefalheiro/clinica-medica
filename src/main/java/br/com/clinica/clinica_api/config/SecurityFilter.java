@@ -36,7 +36,7 @@ public class SecurityFilter extends OncePerRequestFilter {
                 String subject = tokenService.getSubject(tokenJWT);
                 UserDetails usuario = usuarioRepository.findByLogin(subject);
 
-                if (usuario != null) {
+                if (usuario != null && usuario.isEnabled()) {
                     var authentication = new UsernamePasswordAuthenticationToken(usuario, null, usuario.getAuthorities());
                     SecurityContextHolder.getContext().setAuthentication(authentication);
                 }
