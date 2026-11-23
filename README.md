@@ -20,7 +20,7 @@ Esta API REST é a **fonte única de verdade** para as consultas da clínica. El
 |---|
 | Beatriz Falheiro |
 | Elen Santos |
-| Miguel Jesus |
+| Miguel Dias |
 | Monique Silva |
 
 ---
